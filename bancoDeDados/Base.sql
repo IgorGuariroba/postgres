@@ -150,4 +150,95 @@ values (1, 'aprovado', 1, 1);
 insert into situacao (aluno, situacao, disciplina, id)  
 values (3, 'reprovado', 1, 2); 
 
+--------------------------
+CREATE FUNCTION f_tiponota (numeric(6))
+RETURNS  text AS 
+'
+SELECT nome FROM
+tiponota 
+WHERE  codigo = $1;
+'
+language 'sql';
+
+
+SELECT * FROM f_tiponota(1);
+
+
+
+
+-------------
+CREATE TABLE tipo_filme (
+  idtipo integer PRIMARY KEY,
+  descricao varchar(60),
+  qtd_dias_locacao integer,
+  vlr_multa_dia double precision 
+);
+
+SELECT * FROM locacao;
+SELECT * FROM cliente;
+SELECT * FROM filme;
+SELECT * FROM tipo_filme;
+
+ALTER TABLE locacao ADD COLUMN idcliente integer;
+ALTER TABLE locacao
+ADD CONSTRAINT fk_idcliente FOREIGN KEY (idcliente) REFERENCES cliente(idcliente)
+ON DELETE CASCADE ON UPDATE CASCADE;
+------
+ALTER TABLE locacao ADD COLUMN idfilme integer;
+ALTER TABLE locacao
+ADD CONSTRAINT fk_idfilme FOREIGN KEY (idfilme) REFERENCES filme(idfilme)
+ON DELETE CASCADE ON UPDATE CASCADE;
+-------
+ALTER TABLE filme ADD COLUMN idtipo integer;
+ALTER TABLE filme
+ADD CONSTRAINT fk_idtipo FOREIGN KEY (idtipo) REFERENCES tipo_filme(idtipo)
+ON DELETE CASCADE ON UPDATE CASCADE;
+
+-------
+
+
+CREATE SEQUENCE idclinte_seq
+    INCREMENT 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    START 1
+    CACHE 1;
+CREATE SEQUENCE idlocacao_seq
+    INCREMENT 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    START 1
+    CACHE 1;
+CREATE SEQUENCE idfilme_seq
+    INCREMENT 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    START 1
+    CACHE 1;
+CREATE SEQUENCE idtipo_seq
+    INCREMENT 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    START 1
+    CACHE 1;
+ALTER TABLE cliente ALTER COLUMN idcliente SET DEFAULT NEXTVAL('idclinte_seq');
+ALTER TABLE locacao ALTER COLUMN idlocacao SET DEFAULT NEXTVAL('idlocacao_seq');
+ALTER TABLE filme ALTER COLUMN idfilme SET DEFAULT NEXTVAL('idfilme_seq');
+ALTER TABLE tipo_filme ALTER COLUMN idtipo SET DEFAULT NEXTVAL('idtipo_seq');
+
+
+CREATE OR REPLACE FUNCTION incluirregistro ()
+   RETURNS VOID
+   LANGUAGE 'plpgsql'
+   AS $$
+BEGIN 
+
+    INSERT INTO table1 VALUES (1);
+
+    COMMIT;
+EXCEPTION
+   WHEN OTHERS THEN
+   ROLLBACK;
+END;$$;
+
 
